@@ -17,13 +17,12 @@ from keras.layers.core import Dense,Dropout,Flatten
 import pandas as pd
 #from keras.layers.recurrent import LSTM
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
 from sklearn.ensemble import AdaBoostClassifier
 import sklearn
 
 #get data
 def read_files(subset):
-    path = "/Users/sylviaz/Desktop/6010proj/aclImdb/"
+    path = "/Users/sylviaz/Desktop/6010proj/aclImdb/"#please change the path before running
     file_list = []
     
     pos_path = path + subset + "/pos/"
@@ -33,9 +32,7 @@ def read_files(subset):
     neg_path = path + subset + "/neg/"
     for f in os.listdir(neg_path):
         file_list += [neg_path + f]   
-        
-    #print("read",subset,"files:",len(file_list))
-    
+            
     all_labels = ([1]*12500+[0]*12500)
     
     all_texts = []
@@ -52,8 +49,8 @@ def read_files(subset):
 y_train, x_train = read_files("train")
 y_test, x_test = read_files("test")
 
-token = Tokenizer(num_words=2000)#建立一个有2000单词的字典
-token.fit_on_texts(x_train)#读取所有的训练数据评论，按照单词在评论中出现的次数进行排序，前2000名会列入字典
+token = Tokenizer(num_words=2000)
+token.fit_on_texts(x_train)
 
 train_seq = token.texts_to_sequences(x_train)
 test_seq = token.texts_to_sequences(x_test)
@@ -109,7 +106,6 @@ mlp_predpos_trueneg = sum((pd.Series(predict_mlp)!=pd.Series(y_test))&(pd.Series
 mlp_predneg_trueneg = sum((pd.Series(predict_mlp)==pd.Series(y_test))&(pd.Series(predict_mlp)==0))
 
 
-
 #--------------------------------------------------------
 #--------------------------------------------------------
 '''
@@ -137,6 +133,7 @@ right_lstm = sum(pd.Series(predict_lstm)==pd.Series(y_test))
 right_perc_lstm = right_lstm / len(y_test)
 '''
 
+
 #--------------------------------------------------------
 #--------------------------------------------------------
 sid = SentimentIntensityAnalyzer()
@@ -161,7 +158,8 @@ nltk_predpos_trueneg = sum((pd.Series(predict_nltk)!=pd.Series(y_test))&(pd.Seri
 nltk_predneg_trueneg = sum((pd.Series(predict_nltk)==pd.Series(y_test))&(pd.Series(predict_nltk)==0))
 
 
-
+#--------------------------------------------------------
+#--------------------------------------------------------
 df = pd.DataFrame()
 df["reviews_test"] = pd.Series(x_test)
 df["true"] = pd.Series(y_test)
